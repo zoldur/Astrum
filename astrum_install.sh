@@ -1,10 +1,12 @@
 #!/bin/bash
 
 TMP_FOLDER=$(mktemp -d)
-CONFIG_FILE="astrum.conf"
+CONFIG_FILE="Astrum.conf"
 ASTRUM_DAEMON="/usr/local/bin/Astrumd"
 ASTRUM_REPO="https://github.com/astrumcash/astrum"
 DEFAULTASTRUMPORT=25117
+DEFAULTASTRUMUSER="astrum"
+NODEIP=$(curl -s4 icanhazip.com)
 
 
 RED='\033[0;31m'
@@ -32,9 +34,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ -n "$(pidof $ASTRUM_DAEMON)" ]; then
+if [ -n "$(pidof $ASTRUM_DAEMON)" ] || [ -f "$ASTRUM_DAEMOM" ] ; then
   echo -e "${GREEN}\c"
-  read -e -p "AstrumCash is already running. Do you want to add another MN? [Y/N]" NEW_ASTRUM
+  read -e -p "AstrumCash is already installed. Do you want to add another MN? [Y/N]" NEW_ASTRUM
   echo -e "{NC}"
   clear
 else
@@ -142,13 +144,11 @@ EOF
 }
 
 function ask_port() {
-DEFAULTASTRUMPORT=25117
 read -p "ASTRUM Port: " -i $DEFAULTASTRUMPORT -e ASTRUMPORT
 : ${ASTRUMPORT:=$DEFAULTASTRUMPORT}
 }
 
 function ask_user() {
-  DEFAULTASTRUMUSER="astrum"
   read -p "Astrum user: " -i $DEFAULTASTRUMUSER -e ASTRUMUSER
   : ${ASTRUMUSER:=$DEFAULTASTRUMUSER}
 
@@ -158,7 +158,7 @@ function ask_user() {
     echo "$ASTRUMUSER:$USERPASS" | chpasswd
 
     ASTRUMHOME=$(sudo -H -u $ASTRUMUSER bash -c 'echo $HOME')
-    DEFAULTASTRUMFOLDER="$ASTRUMHOME/.astrum"
+    DEFAULTASTRUMFOLDER="$ASTRUMHOME/.Astrum"
     read -p "Configuration folder: " -i $DEFAULTASTRUMFOLDER -e ASTRUMFOLDER
     : ${ASTRUMFOLDER:=$DEFAULTASTRUMFOLDER}
     mkdir -p $ASTRUMFOLDER
@@ -214,7 +214,6 @@ fi
 
 function update_config() {
   sed -i 's/daemon=1/daemon=0/' $ASTRUMFOLDER/$CONFIG_FILE
-  NODEIP=$(curl -s4 icanhazip.com)
   cat << EOF >> $ASTRUMFOLDER/$CONFIG_FILE
 logtimestamps=1
 maxconnections=256
