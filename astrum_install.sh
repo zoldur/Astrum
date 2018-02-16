@@ -49,7 +49,7 @@ function prepare_system() {
 echo -e "Prepare the system to install Astrum master node."
 apt-get update >/dev/null 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
 apt install -y software-properties-common >/dev/null 2>&1
 echo -e "${GREEN}Adding bitcoin PPA repository"
 apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
@@ -58,7 +58,7 @@ apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget pwgen curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
-libminiupnpc-dev libgmp3-dev
+libminiupnpc-dev libgmp3-dev >/dev/null 2>&1
 clear
 if [ "$?" -gt "0" ];
   then
@@ -76,13 +76,15 @@ fi
 clear
 echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
-if [ "$PHYMEM" -lt "2" ];
+SWAP=$(free -g|awk '/^Swap:/{print $2}')
+if [ "$PHYMEM" -lt "2" ] && [ -n "$SWAP" ]
   then
-    echo -e "${GREEN}Server is running with less than 2G of RAM, creating 2G swap file.${NC}"
-    dd if=/dev/zero of=/swapfile bs=1024 count=2M
-    chmod 600 /swapfile
-    mkswap /swapfile
-    swapon -a /swapfile
+    echo -e "${GREEN}Server is running with less than 2G of RAM without SWAP, creating 2G swap file.${NC}"
+    SWAPFILE=$(mktemp)
+    dd if=/dev/zero of=$SWAPFILE bs=1024 count=2M
+    chmod 600 $SWAPFILE
+    mkswap $SWAPFILE
+    swapon -a $SWAPFILE
 else
   echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
 fi
@@ -234,6 +236,7 @@ function important_information() {
  echo -e "Stop: ${RED}systemctl stop $ASTRUMUSER.service${NC}"
  echo -e "VPS_IP:PORT ${RED}$NODEIP:$ASTRUMPORT${NC}"
  echo -e "MASTERNODE PRIVATEKEY is: ${RED}$ASTRUMKEY${NC}"
+ echo -e "Please check Astrum is running with the following command: ${GREEN}systemctl status $ASTRUMUSER.service${NC}"
  echo -e "================================================================================================================================"
 }
 
