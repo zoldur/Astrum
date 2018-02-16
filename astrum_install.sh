@@ -4,6 +4,7 @@ TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="astrum.conf"
 ASTRUM_DAEMON="/usr/local/bin/Astrumd"
 ASTRUM_REPO="https://github.com/astrumcash/astrum"
+DEFAULTASTRUMPORT=25117
 
 
 RED='\033[0;31m'
@@ -90,24 +91,14 @@ function compile_astrum() {
   echo -e "Clone git repo and compile it. This may take some time. Press a key to continue."
   read -n 1 -s -r -p ""
 
-  #cd $TMP_FOLDER
-  #git clone https://github.com/bitcoin-core/secp256k1
-  #cd secp256k1
-  #chmod +x ./autogen.sh
-  #./autogen.sh
-  #./configure
-  #make
-  #compile_error secp256k1
-  #./tests
-  #sudo make install
-  #clear
-
   cd $TMP_FOLDER
   git clone $ASTRUM_REPO
   cd astrum/src
-  make -f makefile.unix # Headless
+  make -f makefile.unix 
   compile_error AstraumCash
   cp -a Astrumd /usr/local/bin
+  cd ~
+  rm -rf $TMP_FOLDER
   clear
 }
 
@@ -151,7 +142,7 @@ EOF
 }
 
 function ask_port() {
-DEFAULTASTRUMPORT=17720
+DEFAULTASTRUMPORT=25117
 read -p "ASTRUM Port: " -i $DEFAULTASTRUMPORT -e ASTRUMPORT
 : ${ASTRUMPORT:=$DEFAULTASTRUMPORT}
 }
