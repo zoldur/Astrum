@@ -2,7 +2,7 @@
 
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="astrum.conf"
-ASTRUM_DAEMON="Astrumd"
+ASTRUM_DAEMON="/usr/local/bin/Astrumd"
 ASTRUM_REPO="https://github.com/astrumcash/astrum"
 
 
@@ -90,24 +90,24 @@ function compile_astrum() {
   echo -e "Clone git repo and compile it. This may take some time. Press a key to continue."
   read -n 1 -s -r -p ""
 
-  cd $TMP_FOLDER
-  git clone https://github.com/bitcoin-core/secp256k1
-  cd secp256k1
-  chmod +x ./autogen.sh
-  ./autogen.sh
-  ./configure
-  make
-  compile_error secp256k1
-  ./tests
-  sudo make install
-  clear
+  #cd $TMP_FOLDER
+  #git clone https://github.com/bitcoin-core/secp256k1
+  #cd secp256k1
+  #chmod +x ./autogen.sh
+  #./autogen.sh
+  #./configure
+  #make
+  #compile_error secp256k1
+  #./tests
+  #sudo make install
+  #clear
 
   cd $TMP_FOLDER
   git clone $ASTRUM_REPO
   cd astrum/src
   make -f makefile.unix # Headless
   compile_error AstraumCash
-  cp -a $ASTRUM_DAEMON /usr/local/bin
+  cp -a Astrumd /usr/local/bin
   clear
 }
 
@@ -126,16 +126,9 @@ Description=Astrum service
 After=network.target
 
 [Service]
-Type=forking
-ExecStart=/usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
-ExecStop=/usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
-Restart=always
-RestartSec=5
-PrivateTmp=true
-TimeoutStopSec=60s
-TimeoutStartSec=5s
-StartLimitInterval=120s
-StartLimitBurst=15
+ExecStart=$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
+ExecStop=$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
+Restart=on-abord
 User=$ASTRUMUSER
 Group=$ASTRUMUSER
 
@@ -217,14 +210,14 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e ASTRUMKEY
   if [[ -z "$ASTRUMKEY" ]]; then
-  sudo -u $ASTRUMUSER /usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
+  sudo -u $ASTRUMUSER $ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
   sleep 5
   if [ -z "$(ps axo user:15,cmd:100 | egrep ^$ASTRUMUSER | grep $ASTRUM_DAEMON)" ]; then
    echo -e "${RED}Astrumd server couldn't start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
-  ASTRUMKEY=$(sudo -u $ASTRUMUSER /usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER masternode genkey)
-  sudo -u $ASTRUMUSER /usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
+  ASTRUMKEY=$(sudo -u $ASTRUMUSER $ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER masternode genkey)
+  sudo -u $ASTRUMUSER $ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
 fi
 }
 
