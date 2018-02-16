@@ -127,8 +127,8 @@ After=network.target
 
 [Service]
 Type=forking
-ExecStart=$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
-ExecStop=$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
+ExecStart=/usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
+ExecStop=/usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
 Restart=always
 RestartSec=5
 PrivateTmp=true
@@ -217,14 +217,14 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e ASTRUMKEY
   if [[ -z "$ASTRUMKEY" ]]; then
-  sudo -u $ASTRUMUSER $ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
+  sudo -u $ASTRUMUSER /usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER
   sleep 5
   if [ -z "$(ps axo user:15,cmd:100 | egrep ^$ASTRUMUSER | grep $ASTRUM_DAEMON)" ]; then
    echo -e "${RED}Astrumd server couldn't start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
-  ASTRUMKEY=$(sudo -u $ASTRUMUSER $ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER masternode genkey)
-  sudo -u $ASTRUMUSER $ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
+  ASTRUMKEY=$(sudo -u $ASTRUMUSER /usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER masternode genkey)
+  sudo -u $ASTRUMUSER /usr/local/bin/$ASTRUM_DAEMON -conf=$ASTRUMFOLDER/$CONFIG_FILE -datadir=$ASTRUMFOLDER stop
 fi
 }
 
