@@ -92,7 +92,7 @@ function compile_astrum() {
 
   cd $TMP_FOLDER
   git clone https://github.com/bitcoin-core/secp256k1
-  cd ~/secp256k1
+  cd secp256k1
   chmod +x ./autogen.sh
   ./autogen.sh
   ./configure
@@ -102,9 +102,9 @@ function compile_astrum() {
   sudo make install
   clear
 
-  cd ~
+  cd $TMP_FOLDER
   git clone $ASTRUM_REPO
-  cd ~/astrum/src
+  cd astrum/src
   make -f makefile.unix # Headless
   compile_error AstraumCash
   cp -a $ASTRUM_DAEMON /usr/local/bin
