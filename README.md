@@ -31,22 +31,35 @@ After the MN is up and running, you need to configure the desktop wallet accordi
 
 ***
 
+## Multiple MN on one VPS:
+
+It is now possible to run multiple **AstrumCash** Master Nodes on the same VPS. Each MN will run under a different user you will choose during installation.  
+
+***
+
+
 ## Usage:  
 
 For security reasons **Astrum** is installed under **astrum** user, hence you need to **su - astrum** before checking:    
 
 ```
-su - astrum
+ASTRUM_USER=astrum #replace astrum with the MN username you want to check
+
+su - $ASTRUM_USER
 Astrumd masternode status
 Astrumd getinfo
 ```  
-Also, if you want to check/start/stop **Astrumd** , run one of the following commands as **root**:
-```
-systemctl status Astrumd #To check the service is running  
-systemctl start Astrumd #To start mambocoind service  
-systemctl stop Astrumd #To stop cropcpoind service  
-```
 
+Also, if you want to check/start/stop **Astrumd** , run one of the following commands as **root**:
+
+```
+ASTRUM_USER=astrum  #replace astrum with the MN username you want to check  
+  
+systemctl status $ASTRUM_USER #To check the service is running.  
+systemctl start $ASTRUM_USER #To start AstrumD service.  
+systemctl stop $ASTRUM_USER #To stop AstrumD service.  
+systemctl is-enabled $ASTRUM_USER #To check whetethe AstrumD service is enabled on boot or not.  
+```  
 
 ***
 
