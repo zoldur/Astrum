@@ -34,7 +34,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ -n "$(pidof $ASTRUM_DAEMON)" ] || [ -f "$ASTRUM_DAEMOM" ] ; then
+if [ -n "$(pidof $ASTRUM_DAEMON)" ] | [ -z "$ASTRUM_DAEMOM" ] ; then
   echo -e "${GREEN}\c"
   read -e -p "AstrumCash is already installed. Do you want to add another MN? [Y/N]" NEW_ASTRUM
   echo -e "{NC}"
