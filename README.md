@@ -1,5 +1,5 @@
 # AstrumCash
-Shell script to install a [AatrumCash Masternode](https://astrum.cash) on a Linux server running Ubuntu 16.04. Use it on your own risk.  
+Shell script to install a [AstrumCash Masternode](https://astrum.cash) on a Linux server running Ubuntu 16.04. Use it on your own risk.  
 
 ***
 ## Installation:  
@@ -58,7 +58,7 @@ ASTRUM_USER=astrum  #replace astrum with the MN username you want to check
 systemctl status $ASTRUM_USER #To check the service is running.  
 systemctl start $ASTRUM_USER #To start AstrumD service.  
 systemctl stop $ASTRUM_USER #To stop AstrumD service.  
-systemctl is-enabled $ASTRUM_USER #To check whetethe AstrumD service is enabled on boot or not.  
+systemctl is-enabled $ASTRUM_USER #To check whetether AstrumD service is enabled on boot or not.  
 ```  
 
 ***
