@@ -220,7 +220,7 @@ function update_config() {
 logtimestamps=1
 maxconnections=256
 masternode=1
-masternodeaddr=$NODEIP
+masternodeaddr=$NODEIP:$ASTRUMPORT
 masternodeprivkey=$ASTRUMKEY
 EOF
   chown -R $ASTRUMUSER: $ASTRUMFOLDER >/dev/null
