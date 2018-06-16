@@ -6,7 +6,7 @@ ASTRUM_DAEMON="/usr/local/bin/Astrumd"
 ASTRUM_REPO="https://github.com/astrumcash/astrum"
 DEFAULTASTRUMPORT=25117
 DEFAULTASTRUMUSER="astrum"
-NODEIP=$(curl -s4 icanhazip.com)
+NODEIP=$(curl -s4 api.ipify.org)
 
 
 RED='\033[0;31m'
